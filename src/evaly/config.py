@@ -57,10 +57,14 @@ class Settings(_Strict):
 def load_settings(
     config_path: Path = Path("config.toml"),
     env: Mapping[str, str] | None = None,
+    env_file: Path = Path(".env"),
 ) -> Settings:
-    """Load settings. Pass `env` in tests; otherwise .env is loaded into os.environ."""
+    """Load settings. Pass `env` in tests; otherwise `env_file` is loaded into os.environ.
+
+    Both paths are relative to the current working directory (the repo root).
+    """
     if env is None:
-        load_dotenv(override=False)  # real env vars win over .env
+        load_dotenv(env_file, override=False)  # real env vars win over .env
         env = os.environ
 
     try:
