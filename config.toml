@@ -1,0 +1,32 @@
+# Non-secret settings. Committed to the repo.
+# Base URL, API key and model name come from env vars (see .env.example), never from here.
+#
+# Provider limits change often. Every number under [*.limits] is a snapshot:
+# verify it in the provider console before each baseline run and update the date.
+
+[agent]
+temperature = 0.0
+timeout_s = 120        # local 8B model on a laptop can be slow on long prompts
+max_retries = 2
+# No daily_token_budget: local Ollama costs no quota.
+
+[agent.limits]
+# Local Ollama has no provider limits. Leave empty.
+
+[judge]
+temperature = 0.0
+timeout_s = 60
+max_retries = 5
+# Stop cleanly when today's estimated judge usage reaches this many tokens.
+# Keep it well below what the free tier allows (rpd * typical tokens per call).
+daily_token_budget = 1_000_000
+
+[judge.limits]
+# Google AI Studio free tier, Gemini 3.5 Flash Lite. Snapshot taken 2026-11-02.
+# Verify in AI Studio > Dashboard > Rate limits.
+rpm = 15
+tpm = 250_000
+rpd = 500
+
+[cache]
+dir = ".cache/responses"
