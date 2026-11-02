@@ -4,6 +4,7 @@ import os
 import tomllib
 from collections.abc import Mapping
 from pathlib import Path
+from typing import Literal
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, ConfigDict, Field, PositiveFloat, PositiveInt, SecretStr
@@ -38,6 +39,9 @@ class ModelSettings(_Strict):
     api_key: SecretStr
     model: str
     temperature: float = Field(default=0.0, ge=0.0, le=2.0)
+    # None = don't send the parameter (provider default). "none" disables thinking on models
+    # that support it (e.g. Qwen3 via Ollama), which cuts latency and output tokens a lot.
+    reasoning_effort: Literal["none", "minimal", "low", "medium", "high"] | None = None
     timeout_s: PositiveFloat = 60.0
     max_retries: int = Field(default=3, ge=0)
     daily_token_budget: PositiveInt | None = None

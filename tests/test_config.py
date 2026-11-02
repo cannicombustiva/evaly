@@ -91,3 +91,18 @@ def test_invalid_value_is_rejected(tmp_path):
 def test_missing_config_file_raises_config_error(tmp_path):
     with pytest.raises(ConfigError, match="not found"):
         load_settings(tmp_path / "nope.toml", env=VALID_ENV)
+
+
+def test_reasoning_effort_is_validated(tmp_path):
+    ok = load_settings(
+        write_config(
+            tmp_path, MINIMAL_TOML.replace("[agent]", '[agent]\nreasoning_effort = "none"')
+        ),
+        env=VALID_ENV,
+    )
+    assert ok.agent.reasoning_effort == "none"
+    assert ok.judge.reasoning_effort is None  # not sent to the provider
+
+    bad = MINIMAL_TOML.replace("[agent]", '[agent]\nreasoning_effort = "off"')
+    with pytest.raises(ValidationError):
+        load_settings(write_config(tmp_path, bad), env=VALID_ENV)

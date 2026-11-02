@@ -6,6 +6,9 @@
 
 [agent]
 temperature = 0.0
+# Qwen3 thinks by default: measured 22-27s and ~550 output tokens on a trivial prompt,
+# versus 0.4s and 3 tokens with "none". Thinking on/off is a candidate Phase 6 experiment.
+reasoning_effort = "none"
 timeout_s = 120        # local 8B model on a laptop can be slow on long prompts
 max_retries = 2
 # No daily_token_budget: local Ollama costs no quota.
