@@ -18,3 +18,6 @@ runs/
 .DS_Store
 .idea/
 .vscode/
+
+# Personal learning notes (Italian, not part of the portfolio)
+notes/
