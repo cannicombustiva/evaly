@@ -6,7 +6,7 @@ The agent is only the system under test. The deliverable is the evaluation work:
 dataset, deterministic checks, a validated LLM judge, a runner with baselines,
 a CI gate in replay mode, and an experiments log driven by the numbers.
 
-> Status: work in progress (Phase 0 — setup).
+> Status: work in progress (Phase 1 — agent under test).
 
 ## Problem
 
@@ -29,6 +29,9 @@ uv sync
 cp .env.example .env    # fill in the judge API key and model id
 ollama pull qwen3:8b
 uv run pytest
+
+# run the agent once on a synthetic example (trace saved under runs/manual/)
+uv run python -m evaly.agent examples/sample_case.json
 ```
 
 Configuration is split in two places:

