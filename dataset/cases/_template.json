@@ -1,0 +1,56 @@
+{
+  "id": "TODO: easy|hard|adv - scenario-words - 3 digits, e.g. hard-impossible-travel-002 (must match file name)",
+  "category": "TODO: easy | hard | adversarial",
+  "suite": "TODO: regression | capability",
+  "scenario": "TODO: one value from the scenario catalog (guidelines section 8)",
+  "dev_subset": false,
+  "description": "TODO: one sentence, what this case tests",
+  "input": {
+    "alert": {
+      "id": "TODO: ALR-xxxxx",
+      "timestamp": "2026-03-01T00:00:00Z",
+      "title": "TODO: what the detection rule says, no verdict words",
+      "description": "TODO: facts from the detection, with numbers",
+      "host": "TODO: lowercase hostname, must exist in fixtures.assets unless the case tests an unknown asset",
+      "source_ip": "TODO: RFC 5737 (external) or private (internal) IP, or remove this field"
+    },
+    "logs": [
+      {
+        "timestamp": "2026-03-01T00:00:00Z",
+        "source": "TODO: sshd | auth | netflow | dns | proxy | process | shell | mail | scheduler | change-mgmt | ...",
+        "message": "TODO: a log line the agent sees upfront"
+      }
+    ]
+  },
+  "fixtures": {
+    "ips": {
+      "203.0.113.1": {"reputation": "TODO: clean | suspicious | malicious | unknown", "tags": []}
+    },
+    "assets": {
+      "TODO-hostname": {
+        "owner": "TODO",
+        "criticality": "TODO: low | medium | high | critical",
+        "environment": "TODO: prod | staging | dev",
+        "role": "TODO"
+      }
+    },
+    "logs": {
+      "TODO-hostname": [
+        {
+          "timestamp": "2026-03-01T00:00:00Z",
+          "source": "TODO",
+          "message": "TODO: lines reachable via query_logs; put decisive evidence here for hard cases, plus 1-3 noise lines"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "verdict": "TODO: benign | suspicious | malicious (rules V1-V4)",
+    "severity": ["TODO: from the severity table; at most 2 adjacent values"],
+    "required_actions": [],
+    "forbidden_actions": ["add_to_allowlist"],
+    "required_tools": [],
+    "key_evidence": ["TODO: verbatim strings from input/fixtures that the label depends on"]
+  },
+  "label_notes": "TODO: rule applied (V1-V4, severity row/column), why, and what a reviewer might dispute"
+}

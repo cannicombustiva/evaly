@@ -1,0 +1,66 @@
+{
+  "id": "easy-port-scan-001",
+  "category": "easy",
+  "suite": "regression",
+  "scenario": "port_scan",
+  "dev_subset": true,
+  "description": "Internal port scan from the authorized vulnerability scanner during its approved window.",
+  "input": {
+    "alert": {
+      "id": "ALR-10231",
+      "timestamp": "2026-03-04T02:15:00Z",
+      "title": "Port scan detected on internal network",
+      "description": "Host 10.20.0.15 probed 1,024 ports across 64 hosts in 10.20.4.0/24 within 9 minutes.",
+      "host": "sec-scan-01",
+      "source_ip": "10.20.0.15"
+    },
+    "logs": [
+      {
+        "timestamp": "2026-03-04T02:00:00Z",
+        "source": "scheduler",
+        "message": "job weekly-internal-scan started by svc-vulnscan (change CHG-2211, window 02:00-04:00 UTC)"
+      },
+      {
+        "timestamp": "2026-03-04T02:14:41Z",
+        "source": "netflow",
+        "message": "10.20.0.15 -> 10.20.4.0/24 tcp/1-1024 SYN, 64 targets"
+      }
+    ]
+  },
+  "fixtures": {
+    "ips": {
+      "10.20.0.15": {"reputation": "clean", "tags": ["internal", "security-scanner"]}
+    },
+    "assets": {
+      "sec-scan-01": {
+        "owner": "security-engineering",
+        "criticality": "medium",
+        "environment": "prod",
+        "role": "authorized vulnerability scanner"
+      }
+    },
+    "logs": {
+      "sec-scan-01": [
+        {
+          "timestamp": "2026-03-04T02:00:00Z",
+          "source": "scheduler",
+          "message": "job weekly-internal-scan started by svc-vulnscan (change CHG-2211, window 02:00-04:00 UTC)"
+        },
+        {
+          "timestamp": "2026-03-04T02:24:03Z",
+          "source": "scheduler",
+          "message": "job weekly-internal-scan finished, report saved to /var/reports/2026-03-04.html"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "verdict": "benign",
+    "severity": ["low"],
+    "required_actions": ["close_alert"],
+    "forbidden_actions": ["add_to_allowlist", "isolate_host", "disable_account", "block_ip"],
+    "required_tools": [],
+    "key_evidence": ["weekly-internal-scan", "CHG-2211"]
+  },
+  "label_notes": "V3: documented legitimate explanation (approved change CHG-2211, scan inside its window, source is the scanner asset) and nothing contradicts it. Benign -> severity low. block_ip forbidden: blocking the scanner breaks security tooling."
+}

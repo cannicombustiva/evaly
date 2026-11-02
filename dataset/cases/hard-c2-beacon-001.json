@@ -1,0 +1,82 @@
+{
+  "id": "hard-c2-beacon-001",
+  "category": "hard",
+  "suite": "capability",
+  "scenario": "c2_beacon",
+  "dev_subset": true,
+  "description": "Mild DNS alert; C2 beaconing and its origin are only visible in the host log store, and the IP has unknown reputation.",
+  "input": {
+    "alert": {
+      "id": "ALR-10544",
+      "timestamp": "2026-03-11T10:42:00Z",
+      "title": "Elevated DNS query volume",
+      "description": "Workstation fin-ws-12 issued 1,800 DNS queries in 30 minutes, 4x its daily baseline.",
+      "host": "fin-ws-12",
+      "source_ip": "10.30.8.112"
+    },
+    "logs": [
+      {
+        "timestamp": "2026-03-11T10:12:05Z",
+        "source": "dns",
+        "message": "fin-ws-12 query a91f3c.cdn-sync.example A"
+      },
+      {
+        "timestamp": "2026-03-11T10:13:05Z",
+        "source": "dns",
+        "message": "fin-ws-12 query 07be21.cdn-sync.example A"
+      }
+    ]
+  },
+  "fixtures": {
+    "ips": {
+      "203.0.113.80": {"reputation": "unknown", "tags": []},
+      "10.30.8.112": {"reputation": "clean", "tags": ["internal"]}
+    },
+    "assets": {
+      "fin-ws-12": {
+        "owner": "finance",
+        "criticality": "high",
+        "environment": "prod",
+        "role": "accounts payable workstation"
+      }
+    },
+    "logs": {
+      "fin-ws-12": [
+        {
+          "timestamp": "2026-03-11T09:58:40Z",
+          "source": "mail",
+          "message": "user m.rossi opened attachment invoice_0423.pdf.exe from billing@vendor-payments.example"
+        },
+        {
+          "timestamp": "2026-03-11T09:58:44Z",
+          "source": "process",
+          "message": "invoice_0423.pdf.exe spawned C:\\Users\\m.rossi\\AppData\\Local\\Temp\\syncsvc.exe"
+        },
+        {
+          "timestamp": "2026-03-11T10:05:00Z",
+          "source": "netflow",
+          "message": "syncsvc.exe 10.30.8.112 -> 203.0.113.80:8443 tcp, 312 bytes, repeating every 60s since 09:59"
+        },
+        {
+          "timestamp": "2026-03-11T10:20:11Z",
+          "source": "av",
+          "message": "scheduled definition update completed"
+        },
+        {
+          "timestamp": "2026-03-11T10:31:02Z",
+          "source": "auth",
+          "message": "m.rossi unlocked workstation"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "verdict": "malicious",
+    "severity": ["high", "critical"],
+    "required_actions": ["isolate_host", "escalate_to_human"],
+    "forbidden_actions": ["add_to_allowlist", "close_alert"],
+    "required_tools": ["query_logs"],
+    "key_evidence": ["invoice_0423.pdf.exe", "repeating every 60s"]
+  },
+  "label_notes": "V1: execution of a double-extension attachment that spawns a binary from Temp, followed by fixed-interval beaconing = post-compromise. High-criticality asset + V1 -> critical per table; high also accepted because the IP reputation is unknown and C2 is inferred from behavior, not confirmed by threat intel. The decisive evidence is only in the log store, hence query_logs required."
+}
